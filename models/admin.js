@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-
+//console.log()
 const adminSchema = new mongoose.Schema({
     fullname:
     {
