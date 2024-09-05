@@ -138,28 +138,28 @@ const userControler = {
             })
         }
     },
-    async adduserskill(req, res) {
-        const userId = req.body.id
-        // console.log(userId, "id")
-        const body = req.body
-        // console.log(body, "sd")
-        try {
-            const user = await User.findByIdAndUpdate(userId, { skill: body.skill }, { new: true });
-            // console.log(user, "usr")
-            return res.status(200).json({
-                success: true,
-                message: Config.USER_UPDATE,
-                data: user
-            })
+    // async adduserskill(req, res) {
+    //     const userId = req.body.id
+    //     // console.log(userId, "id")
+    //     const body = req.body
+    //     // console.log(body, "sd")
+    //     try {
+    //         const user = await User.findByIdAndUpdate(userId, { skill: body.skill }, { new: true });
+    //         // console.log(user, "usr")
+    //         return res.status(200).json({
+    //             success: true,
+    //             message: Config.USER_UPDATE,
+    //             data: user
+    //         })
 
-        }
-        catch (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'err.message'
-            })
-        }
-    },
+    //     }
+    //     catch (err) {
+    //         return res.status(500).json({
+    //             success: false,
+    //             message: 'err.message'
+    //         })
+    //     }
+    // },
     async createeducation(req, res) {
         try {
             const user = new Education({
@@ -653,6 +653,7 @@ const userControler = {
                 data: result
             })
         } catch (err) {
+            console.log(err)
             return res.status(500).json({
                 success: false,
                 message: 'Internal server error'

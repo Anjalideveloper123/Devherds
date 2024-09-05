@@ -166,9 +166,15 @@ const adminControler = {
 
     },
     async getSkills(req, res) {
+        const filterName = req.query.name
 
         try {
-            const skill = await Skill.findById(req.params.id)
+            const filter = filterName ? { name: new RegExp(filterName, 'i') } : {};
+
+            const skill = await Skill.find(filter)
+
+
+            // const skill = await Skill.findById(req.params.id)
             if (!skill) {
                 return res.status(404).json({
                     success: false,
@@ -245,8 +251,12 @@ const adminControler = {
         }
     },
     async getUser(req, res) {
+        const filterName = req.query.email
         try {
-            const user = await User.findById(req.params.id);
+            const filter = filterName ? { email: new RegExp(filterName, 'i') } : {};
+            const user = await User.find(filter)
+
+            // const user = await User.findById(req.params.id);
             if (!user) {
                 return res.status(404).json({
                     success: false,
@@ -304,10 +314,13 @@ const adminControler = {
     },
 
     async getExperience(req, res) {
+        const filterName = req.query.jobtitle
         try {
-            const experience = await Experience.findById(req.params.id)
+            const filter = filterName ? { jobtitle: new RegExp(filterName, 'i') } : {};
+            const experience = await Experience.find(filter)
+
+            // const experience = await Experience.findById(req.params.id)
             if (!experience) {
-                console.log(experience)
                 return res.status(404).json({
                     success: false,
                     message: Config.EXPERIENCE_NOT_FOUND
@@ -351,8 +364,14 @@ const adminControler = {
         }
     },
     async getEducation(req, res) {
+        const filterName = req.query.levelofeducation
         try {
-            const education = await Education.findById(req.params.id)
+
+            const filter = filterName ? { levelofeducation: new RegExp(filterName, 'i') } : {};
+            const education = await Education.find(filter)
+
+
+            // const education = await Education.findById(req.params.id)
             if (!education) {
 
                 return res.status(404).json({
@@ -378,6 +397,7 @@ const adminControler = {
     async updateEducation(req, res) {
         let id = req.params.id
         try {
+
             let update = {
                 levelofeducation: req.body.levelofeducation,
                 institutionname: req.body.institutionname,
@@ -484,22 +504,24 @@ const adminControler = {
 
     },
     async getPost(req, res) {
+        const filterName = req.query.fullname
+        const page = parseInt(req.query.page, 10) || 1;
+        const pageSize = parseInt(req.query.limit, 10) || 10;
+        let skip = (page - 1) * pageSize
+
         try {
-            const post = await Post.findById(req.params.id)
-            if (!post) {
-                return res.status(404).json({
-                    success: false,
-                    message: Config.N0_POST
-                })
+            const filter = filterName ? { fullname: new RegExp(filterName, 'i') } : {};
+            const post = await Post.find(filter)
+                .skip(skip)
+                .limit(pageSize)
 
-            } else {
-                return res.status(200).json({
-                    success: true,
-                    message: Config.POST_FIND,
-                    data: post
+            const totalPost = await Post.countDocuments(filter);
+            return res.status(200).json({
+                success: true,
+                message: Config.POST_FIND,
+                data: { totalPost, post }
 
-                })
-            }
+            })
         } catch (err) {
             console.log(err)
             return res.status(500).json({
@@ -509,20 +531,26 @@ const adminControler = {
         }
     },
     async getJob(req, res) {
+        const filterName = req.query.fullname
+        const page = parseInt(req.query.page, 10) || 1;
+        const pageSize = parseInt(req.query.limit, 10) || 10;
+        let skip = (page - 1) * pageSize
+
         try {
-            const job = await Job.findById(req.params.id)
-            if (!job) {
-                return res.status(404).json({
-                    success: false,
-                    message: Config.NO_JOB
-                })
-            } else {
-                return res.status(200).json({
-                    success: true,
-                    message: Config.JOB_FIND,
-                    data: job
-                })
-            }
+            const filter = filterName ? { fullname: new RegExp(filterName, 'i') } : {};
+            const job = await Job.find(filter)
+                .skip(skip)
+                .limit(pageSize)
+
+            const totalJob = await Job.countDocuments(filter);
+
+
+            return res.status(200).json({
+                success: true,
+                message: Config.JOB_FIND,
+                data: { totalJob, job }
+            })
+
         } catch (err) {
             return res.status(500).json({
                 success: false,
