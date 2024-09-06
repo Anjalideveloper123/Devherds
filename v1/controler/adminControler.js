@@ -224,14 +224,26 @@ const adminControler = {
     },
     async getAllUser(req, res) {
         const filterName = req.query.fullname
+        const filterEmail = req.query.email
         const page = parseInt(req.query.page, 10) || 1;
         const pageSize = parseInt(req.query.limit, 10) || 10;
         let skip = (page - 1) * pageSize
 
         try {
-            const filter = filterName ? { fullname: new RegExp(filterName, 'i') } : {};
+            const filter = {};
+            // const filter = filterName ? { fullname: new RegExp(filterName, 'i') } : {};
+            if (filterName) {
+                filter.fullname = new RegExp(filterName, 'i')
+            };
+
+
+            if (filterEmail) {
+
+                filter.email = new RegExp(filterEmail, 'i')
+            };
+
             const user = await User.find(filter)
-                // console.log(skills)
+
                 .skip(skip)
                 .limit(pageSize)
 
@@ -253,7 +265,9 @@ const adminControler = {
     async getUser(req, res) {
         const filterName = req.query.email
         try {
+
             const filter = filterName ? { email: new RegExp(filterName, 'i') } : {};
+
             const user = await User.find(filter)
 
             // const user = await User.findById(req.params.id);
@@ -486,6 +500,34 @@ const adminControler = {
                         "as": "experiences"
                     }
                 },
+                {
+                    "$lookup": {
+                        "from": "posts",
+                        "let": { "userId": "$_id" },
+                        "pipeline": [
+                            {
+                                "$match": {
+                                    "$expr": { "$eq": ["$userId", "$$userId"] },
+                                }
+                            }
+                        ],
+                        "as": "posts"
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "jobs",
+                        "let": { "userId": "$_id" },
+                        "pipeline": [
+                            {
+                                "$match": {
+                                    "$expr": { "$eq": ["$userId", "$$userId"] },
+                                }
+                            }
+                        ],
+                        "as": "jobs"
+                    }
+                },
 
             ])
             return res.status(200).json({
@@ -504,13 +546,13 @@ const adminControler = {
 
     },
     async getPost(req, res) {
-        const filterName = req.query.fullname
+        const filterName = req.query.posttitle
         const page = parseInt(req.query.page, 10) || 1;
         const pageSize = parseInt(req.query.limit, 10) || 10;
         let skip = (page - 1) * pageSize
 
         try {
-            const filter = filterName ? { fullname: new RegExp(filterName, 'i') } : {};
+            const filter = filterName ? { posttitle: new RegExp(filterName, 'i') } : {};
             const post = await Post.find(filter)
                 .skip(skip)
                 .limit(pageSize)
@@ -531,13 +573,13 @@ const adminControler = {
         }
     },
     async getJob(req, res) {
-        const filterName = req.query.fullname
+        const filterName = req.query.jobposition
         const page = parseInt(req.query.page, 10) || 1;
         const pageSize = parseInt(req.query.limit, 10) || 10;
         let skip = (page - 1) * pageSize
 
         try {
-            const filter = filterName ? { fullname: new RegExp(filterName, 'i') } : {};
+            const filter = filterName ? { jobposition: new RegExp(filterName, 'i') } : {};
             const job = await Job.find(filter)
                 .skip(skip)
                 .limit(pageSize)
@@ -557,7 +599,66 @@ const adminControler = {
                 message: 'Internal server error'
             })
         }
-    }
+    },
+    // async dataGet(req, res) {
+    //     const userId = req.params.id
+    //     const filterName = req.query.fullname
+
+    //     try {
+
+    //         let matchStage = {
+
+    //         };
+
+    //         if (filterName) {
+
+    //             matchStage.$match = {
+    //                 ...matchStage.$match, fullname: { $regex: new RegExp(filterName, 'i') }
+    //             };
+    //         }
+    //         const user = await User.aggregate([
+    //             { $match: matchStage },
+    //             {
+    //                 "$lookup": {
+    //                     "from": "posts",
+    //                     "let": { "userId": "$post" },
+    //                     "pipeline": [
+    //                         {
+    //                             "$match": {
+    //                                 "$expr": { "$eq": ["$_id", "$$userId"] }
+    //                             }
+    //                         }
+    //                     ],
+    //                     "as": "posts"
+    //                 }
+    //             },
+    //             {
+    //                 "$lookup": {
+    //                     "from": "jobs",
+    //                     "let": { "userId": "$job" },
+    //                     "pipeline": [
+    //                         {
+    //                             "$match": {
+    //                                 "$expr": { "$eq": ["$_id", "$$userId"] }
+    //                             }
+    //                         }
+    //                     ],
+    //                     "as": "jobs"
+    //                 }
+    //             }
+    //         ])
+    //         return res.status(200).json({
+    //             success: true,
+    //             message: Config.GET_DATA,
+    //             data: user
+    //         })
+    //     } catch (err) {
+    //         return res.status(500).json({
+    //             success: false,
+    //             message: 'Internal server error'
+    //         })
+    //     }
+    // }
 
 
 }

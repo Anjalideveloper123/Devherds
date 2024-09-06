@@ -27,6 +27,7 @@ var config = {
     POST_FIND: 'find posts',
     NO_JOB: 'no jobs',
     JOB_FIND: 'find job successfully',
+    GET_DATA:'get data successfully',
 
 
 }

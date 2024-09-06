@@ -8,8 +8,6 @@ const jobSchema = new mongoose.Schema({
     },
     jobposition: {
         type: String,
-
-
     },
     typeofworkplace: {
         type: String,

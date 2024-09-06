@@ -26,6 +26,8 @@ router.get('/getAlldata/:id', adminControler.getAlldata)
 router.get('/getPost', adminControler.getPost)
 router.get('/getJob', adminControler.getJob)
 
+// router.get('/dataGet/:id', adminControler.dataGet)
+
 
 
 module.exports = router

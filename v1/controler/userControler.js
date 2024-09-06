@@ -409,6 +409,34 @@ const userControler = {
                         ],
                         "as": "educations"
                     }
+                },
+                {
+                    "$lookup": {
+                        "from": "posts",
+                        "let": { "userId": "$_id" },
+                        "pipeline": [
+                            {
+                                "$match": {
+                                    "$expr": { "$eq": ["$userId", "$$userId"] },
+                                }
+                            }
+                        ],
+                        "as": "posts"
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "jobs",
+                        "let": { "userId": "$_id" },
+                        "pipeline": [
+                            {
+                                "$match": {
+                                    "$expr": { "$eq": ["$userId", "$$userId"] },
+                                }
+                            }
+                        ],
+                        "as": "jobs"
+                    }
                 }
 
             ]);
